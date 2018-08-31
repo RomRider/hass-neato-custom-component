@@ -2,7 +2,9 @@
 
 This is a custom component designed for Home Assistant to test new Neato features.
 
-Currently testing `vacuum.locate` service
+Currently testing `vacuum.neato_custom_cleaning` service.
+
+Developer Docs: https://developers.neatorobotics.com/api/robot-remote-protocol/housecleaning
 
 Steps to install.
 
