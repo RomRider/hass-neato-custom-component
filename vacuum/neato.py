@@ -41,8 +41,12 @@ ATTR_MODE = 'mode'
 ATTR_NAVIGATION = 'navigation'
 ATTR_CATEGORY = 'category'
 ATTR_NAME = 'name'
+ATTR_MAP_ID = 'map_id'
+ATTR_BOUNDARY_ID = 'boundary_id'
+ATTR_BOUNDARY_NAME = 'boundary_name'
 
 SERVICE_NEATO_CUSTOM_CLEANING = 'neato_custom_cleaning'
+SERVICE_NEATO_ZONE_CLEANING = 'neato_zone_cleaning'
 
 def setup_platform(hass, config, add_entities, discovery_info=None):
     """Set up the Neato vacuum."""
@@ -65,6 +69,9 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
 
     hass.services.register(DOMAIN, SERVICE_NEATO_CUSTOM_CLEANING,
                             neato_custom_cleaning_service)
+    
+    hass.services.register(DOMAIN, SERVICE_NEATO_ZONE_CLEANING,
+                           neato_zone_cleaning_service)
 
 class NeatoConnectedVacuum(StateVacuumDevice):
     """Representation of a Neato Connected Vacuum."""
@@ -224,3 +231,8 @@ class NeatoConnectedVacuum(StateVacuumDevice):
         """Custom cleaning service call"""
         self._clean_state = STATE_CLEANING
         self.robot.custom_cleaning(mode, navigation, category)
+
+    def neato_zone_cleaning(self, mapId, boundaryId, boundaryName, **kwargs):
+        """Zone cleaning service call."""
+        self._clean_state = STATE_CLEANING
+        self.robot.zone_cleaning(self, mapId, boundaryId, boundaryName)
