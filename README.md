@@ -57,4 +57,5 @@ Then finally the service call data:
 `
 
 Note: `mode` and `navigation` can be modified (https://github.com/stianaske/pybotvac/blob/master/pybotvac/robot.py#L64) however `category` cannot be.
+
 Enjoy using your Botvac in Home Assistant!
