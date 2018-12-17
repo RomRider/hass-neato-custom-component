@@ -55,4 +55,6 @@ Then finally the service call data:
 "boundary_id":"BOUNDARY_ID",
 "name":"FRIENDLY_NAME"}
 `
+
+Note: `mode` and `navigation` can be modified (https://github.com/stianaske/pybotvac/blob/master/pybotvac/robot.py#L64) however `category` cannot be.
 Enjoy using your Botvac in Home Assistant!
