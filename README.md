@@ -18,21 +18,41 @@ Steps to gather Map data.
 
 1. First create a persistent map in the Neato app if it does not exist.
 2. Create the zones you desire in the app.
-3. Start cleaning one of the zones using the app.
-4. Use pybotvac to retrieve robot state (will only work if you have terminal access and are able to interact with the library, see pybotvac for details)
-5. If you have terminal access type `python3` to enter the python terminal, make sure you activate your virtual environment.
-6. `from pybotvac import Account`
-7. Replace with your login data: `for robot in Account('USERNAME', 'PASSWORD').robots:print(robot)`
-8. `state = robot.state`
-9. `print(state)`
-10. Assuming all steps were successful write down/save the `mapId`, the `boundary`: `id` and `boundary`: `name` (the name should appear like it did in the app)
-11. Repeat steps to retrieve the additional `boundary` `id` and `name` for each zone you created.
-12. Input the data in HA while making the service call.
+3. Use pybotvac to retrieve the Map ID and Boundary ID's (will only work if you have terminal access and are able to interact with the library, see pybotvac for details)
+4. If you have terminal access type `python3` to enter the python terminal, make sure you activate your virtual environment.
+5. `import pybotvac`
+6. `account = pybotvac.Account("USERNAME", "PASSWORD")`
+7. `account.refresh_robots(`)
+8. print(account.persistent_maps)`
 
-Example state output:
+Example output:
 
 `
-{'version': 1, 'reqId': '1', 'result': 'ok', 'data': {}, 'error': None, 'alert': None, 'state': 2, 'action': 11, 'cleaning': {'category': 4, 'mode': 2, 'modifier': 1, 'navigationMode': 1, 'mapId': 'ABCD', 'boundary': {'id': 'ABCD', 'name': 'Hallway'}, 'spotWidth': 0, 'spotHeight': 0}, 'details': {'isCharging': False, 'isDocked': False, 'isScheduleEnabled': False, 'dockHasBeenSeen': True, 'charge': 94}, 'availableCommands': {'start': False, 'stop': True, 'pause': True, 'resume': False, 'goToBase': True}, 'availableServices': {'findMe': 'basic-1', 'generalInfo': 'basic-1', 'houseCleaning': 'basic-4', 'IECTest': 'advanced-1', 'logCopy': 'basic-1', 'manualCleaning': 'basic-1', 'maps': 'basic-2', 'preferences': 'basic-1', 'schedule': 'basic-2', 'softwareUpdate': 'basic-1', 'spotCleaning': 'basic-3', 'wifi': 'basic-1'}, 'meta': {'modelName': 'BotVacD7Connected', 'firmware': '4.3.1-180'}}
+{'ROBOT_SERIAL': [{'id': 'MAP_ID', 'name': 'MAP_NAME', 'url':
 `
 
+Then to retrieve the boundary information:
+
+1. Using the terminal continue with the following steps
+2. `robot = Robot('ROBOT_SERIAL', 'ROBOT_SECRET', 'ROBOT_NAME')`
+3. `boundary = robot.get_map_boundaries('MAP_ID').json()`
+4. `print (boundary)`
+5. Repeat steps 2-4 for each botvac you have
+
+Example output:
+
+`
+{'version': 1, 'reqId': '1', 'result': 'ok', 'data': {'boundaries': [{'id': 'BOUNDARY_ID', 'type': 'polygon', 'vertices': [[0.3913, 0.4919], [0.6008, 0.4919], [0.6008, 0.6337], [0.3913, 0.6337]], 'name': 'BOUNDARY_NAME', 'color': '#5B7BA5', 'enabled': True}, {'id': 'BOUNDARY_ID', 'type': 'polygon', 'vertices': [[0.6202, 0.2937], [0.7045, 0.2937], [0.7045, 0.3778], [0.6202, 0.3778]], 'name': 'BOUNDARY_NAME', 'color': '#E49770', 'enabled': True}]}}
+`
+
+Then finally the service call data:
+
+`
+{"entity_id":"ENTITY_ID",
+"mode":2,
+"navigation":1,
+"category":4,
+"boundary_id":"BOUNDARY_ID",
+"name":"FRIENDLY_NAME"}
+`
 Enjoy using your Botvac in Home Assistant!
