@@ -132,7 +132,7 @@ xiaomi_remote_control_move_step:
       description: Duration of the movement.
       example: '1500'
 
-neato_custom_cleaning:
+neato_zone_cleaning:
   description: Custom cleaning service call specific to Neato Botvacs.
   fields:
     entity_id:
@@ -150,3 +150,6 @@ neato_custom_cleaning:
     name:
       description: Name of the botvac. [Required]
       example: "House Vacuum"
+    boundary_id:
+      description: Boundary ID (obtained from pybotvac). [Required]
+      example: "123456-ABCD"
