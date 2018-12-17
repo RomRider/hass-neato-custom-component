@@ -230,7 +230,7 @@ class NeatoConnectedVacuum(StateVacuumDevice):
         self._clean_state = STATE_CLEANING
         self.robot.custom_cleaning(mode, navigation, category)
 
-    def neato_zone_cleaning(self, boundaryId, **kwargs):
+    def neato_zone_cleaning(self, boundary_id, **kwargs):
         """Zone cleaning service call."""
         self._clean_state = STATE_CLEANING
-        self.robot.start_cleaning(boundaryId)
+        self.robot.start_cleaning(mode, navigation, category, boundary_id)
