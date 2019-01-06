@@ -17,8 +17,8 @@ from homeassistant.util import Throttle
 
 _LOGGER = logging.getLogger(__name__)
 
-REQUIREMENTS = ['https://github.com/dshokouhi/pybotvac/archive/0.0.12dev.zip'
-                '#pybotvac==0.0.12dev']
+REQUIREMENTS = ['pybotvac==0.0.13']
+
 DOMAIN = 'neato'
 NEATO_ROBOTS = 'neato_robots'
 NEATO_LOGIN = 'neato_login'
