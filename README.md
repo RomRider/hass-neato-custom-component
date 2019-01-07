@@ -2,7 +2,7 @@
 
 This is a custom component designed for Home Assistant to test new Neato features.
 
-Currently testing `vacuum.neato_zone_cleaning` service (For D7 model only).
+Currently testing `vacuum.neato_zone_cleaning` service (For D7 model only).  Please see device attributes for the zone ID.
 
 Developer Docs: https://developers.neatorobotics.com/api/robot-remote-protocol/housecleaning
 
@@ -13,7 +13,22 @@ Steps to install.
 3. Leave Neato configured as it is in your configuration.yaml (or configure it according to the docs: https://www.home-assistant.io/components/neato/)
 4. Restart Home Assistant
 
+Then finally the service call data:
 
+`
+{"entity_id":"ENTITY_ID",
+"mode":2,
+"navigation":1,
+"category":4,
+"boundary_id":"BOUNDARY_ID",
+"name":"FRIENDLY_NAME"}
+`
+
+Note: `mode` and `navigation` can be modified (https://github.com/stianaske/pybotvac/blob/master/pybotvac/robot.py#L64) however `category` cannot be.
+
+Enjoy using your Botvac in Home Assistant!
+
+NOT NEEDED ANYMORE
 Steps to gather Map data.
 
 1. First create a persistent map in the Neato app if it does not exist.
@@ -44,18 +59,3 @@ Example output:
 `
 {'version': 1, 'reqId': '1', 'result': 'ok', 'data': {'boundaries': [{'id': 'BOUNDARY_ID', 'type': 'polygon', 'vertices': [[0.3913, 0.4919], [0.6008, 0.4919], [0.6008, 0.6337], [0.3913, 0.6337]], 'name': 'BOUNDARY_NAME', 'color': '#5B7BA5', 'enabled': True}, {'id': 'BOUNDARY_ID', 'type': 'polygon', 'vertices': [[0.6202, 0.2937], [0.7045, 0.2937], [0.7045, 0.3778], [0.6202, 0.3778]], 'name': 'BOUNDARY_NAME', 'color': '#E49770', 'enabled': True}]}}
 `
-
-Then finally the service call data:
-
-`
-{"entity_id":"ENTITY_ID",
-"mode":2,
-"navigation":1,
-"category":4,
-"boundary_id":"BOUNDARY_ID",
-"name":"FRIENDLY_NAME"}
-`
-
-Note: `mode` and `navigation` can be modified (https://github.com/stianaske/pybotvac/blob/master/pybotvac/robot.py#L64) however `category` cannot be.
-
-Enjoy using your Botvac in Home Assistant!
