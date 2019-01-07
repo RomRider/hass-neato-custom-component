@@ -63,10 +63,9 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         mode = call.data.get(ATTR_MODE)
         navigation = call.data.get(ATTR_NAVIGATION)
         category = call.data.get(ATTR_CATEGORY)
-        #name = call.data.get(ATTR_NAME)
+        name = call.data.get(ATTR_NAME)
         boundary_id = call.data.get(ATTR_BOUNDARY_ID)
-        for robot in hass.data[NEATO_ROBOTS]:
-            controller[robot.name].neato_zone_cleaning(mode, navigation, category, boundary_id)
+        controller[name].neato_zone_cleaning(mode, navigation, category, boundary_id)
     
     hass.services.register(DOMAIN, SERVICE_NEATO_ZONE_CLEANING,
                            neato_zone_cleaning_service)
