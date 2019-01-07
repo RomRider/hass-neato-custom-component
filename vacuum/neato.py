@@ -15,7 +15,8 @@ from homeassistant.components.vacuum import (
     SUPPORT_MAP, ATTR_STATUS, ATTR_BATTERY_LEVEL, ATTR_BATTERY_ICON,
     DOMAIN, SUPPORT_LOCATE)
 from custom_components.neato import (
-    NEATO_ROBOTS, NEATO_LOGIN, NEATO_MAP_DATA, ACTION, ERRORS, MODE, ALERTS)
+    NEATO_ROBOTS, NEATO_LOGIN, NEATO_MAP_DATA, ACTION, ERRORS, MODE, ALERTS,
+    NEATO_PERSISTENT_MAPS)
 
 from homeassistant.const import ATTR_ENTITY_ID
 
@@ -36,6 +37,7 @@ ATTR_CLEAN_BATTERY_START = 'battery_level_at_clean_start'
 ATTR_CLEAN_BATTERY_END = 'battery_level_at_clean_end'
 ATTR_CLEAN_SUSP_COUNT = 'clean_suspension_count'
 ATTR_CLEAN_SUSP_TIME = 'clean_suspension_time'
+ATTR_MAP_ID = 'map_id'
 
 ATTR_MODE = 'mode'
 ATTR_NAVIGATION = 'navigation'
@@ -61,9 +63,10 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         mode = call.data.get(ATTR_MODE)
         navigation = call.data.get(ATTR_NAVIGATION)
         category = call.data.get(ATTR_CATEGORY)
-        name = call.data.get(ATTR_NAME)
+        #name = call.data.get(ATTR_NAME)
         boundary_id = call.data.get(ATTR_BOUNDARY_ID)
-        controller[name].neato_zone_cleaning(mode, navigation, category, boundary_id)
+        for robot in hass.data[NEATO_ROBOTS]:
+            controller[robot.name].neato_zone_cleaning(mode, navigation, category, boundary_id)
     
     hass.services.register(DOMAIN, SERVICE_NEATO_ZONE_CLEANING,
                            neato_zone_cleaning_service)
@@ -90,6 +93,11 @@ class NeatoConnectedVacuum(StateVacuumDevice):
         self._available = False
         self._battery_level = None
         self._robot_serial = self.robot.serial
+        self._robot_maps = hass.data[NEATO_PERSISTENT_MAPS]
+        self._robot_map_id = None
+        self._robot_boundaries = {}
+        self._boundary_id = {}
+        self._boundary_name = {}
 
     def update(self):
         """Update the states of Neato Vacuums."""
@@ -105,6 +113,7 @@ class NeatoConnectedVacuum(StateVacuumDevice):
             self._available = False
             return
         _LOGGER.debug('self._state=%s', self._state)
+        robot_alert = ALERTS.get(self._state['alert'])
         if self._state['state'] == 1:
             if self._state['details']['isCharging']:
                 self._clean_state = STATE_DOCKED
@@ -116,14 +125,17 @@ class NeatoConnectedVacuum(StateVacuumDevice):
             else:
                 self._clean_state = STATE_IDLE
                 self._status_state = 'Stopped'
+                
+            if robot_alert is not None:
+                self._status_state = robot_alert
         elif self._state['state'] == 2:
-            if ALERTS.get(self._state['error']) is None:
+            if robot_alert is None:
                 self._clean_state = STATE_CLEANING
                 self._status_state = (
                     MODE.get(self._state['cleaning']['mode'])
                     + ' ' + ACTION.get(self._state['action']))
             else:
-                self._status_state = ALERTS.get(self._state['error'])
+                self._status_state = robot_alert
         elif self._state['state'] == 3:
             self._clean_state = STATE_PAUSED
             self._status_state = 'Paused'
@@ -155,7 +167,15 @@ class NeatoConnectedVacuum(StateVacuumDevice):
             self._mapdata[self._robot_serial]['maps'][0]['run_charge_at_end'])
 
         self._battery_level = self._state['details']['charge']
-
+        
+        self._robot_map_id = self._robot_maps[self._robot_serial][0]['id']
+        
+        self._robot_boundaries = self.robot.get_map_boundaries(self._robot_map_id).json()
+        
+        for boundary in range(len(self._robot_boundaries['data']['boundaries'])):
+           self._boundary_name[boundary] = self._robot_boundaries['data']['boundaries'][boundary]['name']
+           self._boundary_id[boundary] = self._robot_boundaries['data']['boundaries'][boundary]['id']
+        
     @property
     def name(self):
         """Return the name of the device."""
@@ -213,7 +233,13 @@ class NeatoConnectedVacuum(StateVacuumDevice):
             data[ATTR_CLEAN_BATTERY_START] = self.clean_battery_start
         if self.clean_battery_end is not None:
             data[ATTR_CLEAN_BATTERY_END] = self.clean_battery_end
+           
+        if self._robot_map_id is not None:
+            data[ATTR_MAP_ID] = self._robot_map_id
 
+        if self._boundary_name is not None:
+           for boundary in self._boundary_name:
+               data[self._boundary_name[boundary]] = self._boundary_id[boundary]
         return data
 
     def start(self):
