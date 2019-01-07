@@ -98,6 +98,7 @@ class NeatoConnectedVacuum(StateVacuumDevice):
         self._robot_boundaries = {}
         self._boundary_id = {}
         self._boundary_name = {}
+        self._robot_has_map = self.robot.has_persistent_maps
 
     def update(self):
         """Update the states of Neato Vacuums."""
@@ -168,13 +169,14 @@ class NeatoConnectedVacuum(StateVacuumDevice):
 
         self._battery_level = self._state['details']['charge']
         
-        self._robot_map_id = self._robot_maps[self._robot_serial][0]['id']
+        if self._robot_has_map:
+            self._robot_map_id = self._robot_maps[self._robot_serial][0]['id']
         
-        self._robot_boundaries = self.robot.get_map_boundaries(self._robot_map_id).json()
+            self._robot_boundaries = self.robot.get_map_boundaries(self._robot_map_id).json()
         
-        for boundary in range(len(self._robot_boundaries['data']['boundaries'])):
-           self._boundary_name[boundary] = self._robot_boundaries['data']['boundaries'][boundary]['name']
-           self._boundary_id[boundary] = self._robot_boundaries['data']['boundaries'][boundary]['id']
+            for boundary in range(len(self._robot_boundaries['data']['boundaries'])):
+               self._boundary_name[boundary] = self._robot_boundaries['data']['boundaries'][boundary]['name']
+               self._boundary_id[boundary] = self._robot_boundaries['data']['boundaries'][boundary]['id']
         
     @property
     def name(self):
