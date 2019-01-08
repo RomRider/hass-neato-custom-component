@@ -151,5 +151,5 @@ neato_zone_cleaning:
       description: Name of the botvac. [Required]
       example: "House Vacuum"
     boundary_id:
-      description: Boundary ID (from device attributes). [Required]
+      description: Boundary ID (from device attributes).
       example: "123456-ABCD"
