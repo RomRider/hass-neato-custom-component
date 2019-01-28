@@ -20,17 +20,16 @@ Then finally the service call data:
 "mode":2,
 "navigation":1,
 "category":4,
-"zone":"BOUNDARY_NAME",
+"boundary_id":"BOUNDARY_ID",
 "name":"FRIENDLY_NAME"}
 `
 
 Note: `mode` and `navigation` can be modified (https://github.com/stianaske/pybotvac/blob/master/pybotvac/robot.py#L64) however `category` cannot be.
 
-`zone` is the name of the zone from the Neato app.
+`boundary_id` can be found in device attributes
 
 Enjoy using your Botvac in Home Assistant!
 
-NOT NEEDED ANYMORE
 Steps to gather Map data.
 
 1. First create a persistent map in the Neato app if it does not exist.
@@ -40,7 +39,7 @@ Steps to gather Map data.
 5. `import pybotvac`
 6. `account = pybotvac.Account("USERNAME", "PASSWORD")`
 7. `account.refresh_robots(`)
-8. print(account.persistent_maps)`
+8. `print(account.persistent_maps)`
 
 Example output:
 
@@ -51,7 +50,7 @@ Example output:
 Then to retrieve the boundary information:
 
 1. Using the terminal continue with the following steps
-2. `robot = Robot('ROBOT_SERIAL', 'ROBOT_SECRET', 'ROBOT_NAME')`
+2. `robot = Robot('ROBOT_SERIAL', 'ROBOT_SECRET', 'ROBOT_NAME')` If you don't know your robots secret use this method to find it: https://github.com/stianaske/pybotvac#account
 3. `boundary = robot.get_map_boundaries('MAP_ID').json()`
 4. `print (boundary)`
 5. Repeat steps 2-4 for each botvac you have
