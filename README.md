@@ -20,11 +20,13 @@ Then finally the service call data:
 "mode":2,
 "navigation":1,
 "category":4,
-"boundary_id":"BOUNDARY_ID",
+"zone":"BOUNDARY_NAME",
 "name":"FRIENDLY_NAME"}
 `
 
 Note: `mode` and `navigation` can be modified (https://github.com/stianaske/pybotvac/blob/master/pybotvac/robot.py#L64) however `category` cannot be.
+
+`zone` is the name of the zone from the Neato app.
 
 Enjoy using your Botvac in Home Assistant!
 
