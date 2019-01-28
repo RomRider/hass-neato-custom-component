@@ -30,6 +30,8 @@ Note: `mode` and `navigation` can be modified (https://github.com/stianaske/pybo
 
 Enjoy using your Botvac in Home Assistant!
 
+NOT NEEDED ANYMORE
+
 Steps to gather Map data.
 
 1. First create a persistent map in the Neato app if it does not exist.
